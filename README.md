@@ -10,4 +10,5 @@ Worldping-api is the backend service for the worldPing-app available from [grafa
 
 Everything that Worldping is capable of doing is exposed through a REST based API. Documentation for this API is available at
 [API Docs](http://docs.worldping.apiary.io/#)
+# This is a customize of worldping-api from raintank, thanks God for such an amazing opensource
 # zworldping-api
