@@ -56,6 +56,7 @@ const (
 	DNS_CHECK    CheckType = "dns"
 	PING_CHECK   CheckType = "ping"
 	STATIC_CHECK CheckType = "static"
+	CLINK_CHECK  CheckType = "clink"
 )
 
 type Check struct {
