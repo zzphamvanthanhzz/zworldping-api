@@ -51,13 +51,14 @@ type EndpointDTO struct {
 type CheckType string
 
 const (
-	HTTP_CHECK   CheckType = "http"
-	HTTPS_CHECK  CheckType = "https"
-	DNS_CHECK    CheckType = "dns"
-	PING_CHECK   CheckType = "ping"
-	STATIC_CHECK CheckType = "static"
-	CLINK_CHECK  CheckType = "clink"
-	TCP_CHECK    CheckType = "tcp"
+	HTTP_CHECK         CheckType = "http"
+	HTTPS_CHECK        CheckType = "https"
+	DNS_CHECK          CheckType = "dns"
+	PING_CHECK         CheckType = "ping"
+	STATIC_CHECK       CheckType = "static"
+	CLINK_CHECK        CheckType = "clink"
+	TCP_CHECK          CheckType = "tcp"
+	CDNINTEGRITY_CHECK CheckType = "cdnintegrity"
 )
 
 type Check struct {
