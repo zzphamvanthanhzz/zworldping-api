@@ -331,6 +331,8 @@ func updateProbe(sess *session, p *m.ProbeDTO) error {
 		probe := &m.Probe{
 			Id:            p.Id,
 			Name:          p.Name,
+			Longitude:     p.Longitude,
+			Latitude:      p.Latitude,
 			Enabled:       p.Enabled,
 			EnabledChange: p.EnabledChange,
 			OrgId:         p.OrgId,
