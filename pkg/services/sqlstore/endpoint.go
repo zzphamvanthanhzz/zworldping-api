@@ -182,6 +182,7 @@ func addEndpoint(sess *session, e *m.EndpointDTO) error {
 	}
 	endpoint.UpdateSlug()
 	if _, err := sess.Insert(endpoint); err != nil {
+		log.Debug(fmt.Sprintf("addEndpoint Error 1: %s", err.Error()))
 		return err
 	}
 	e.Id = endpoint.Id
@@ -201,6 +202,7 @@ func addEndpoint(sess *session, e *m.EndpointDTO) error {
 	if len(endpointTags) > 0 {
 		sess.Table("endpoint_tag")
 		if _, err := sess.Insert(&endpointTags); err != nil {
+			log.Debug(fmt.Sprintf("addEndpoint Error 2: %s", err.Error()))
 			return err
 		}
 	}
@@ -211,6 +213,7 @@ func addEndpoint(sess *session, e *m.EndpointDTO) error {
 		c.OrgId = e.OrgId
 		c.EndpointId = e.Id
 		if err := addCheck(sess, c); err != nil {
+			log.Debug(fmt.Sprintf("addEndpoint Error 3: %s", err.Error()))
 			return err
 		}
 	}
@@ -438,7 +441,9 @@ func addCheck(sess *session, c *m.Check) error {
 	c.Updated = time.Now()
 	sess.Table("check")
 	sess.UseBool("enabled")
+	log.Debug("addCheck session info: %#v with check: %#v", sess, c)
 	if _, err := sess.Insert(c); err != nil {
+		log.Debug(fmt.Sprintf("addCheck Error 1: %s", err.Error()))
 		return err
 	}
 
@@ -448,6 +453,7 @@ func addCheck(sess *session, c *m.Check) error {
 func addCheckRoutes(sess *session, c *m.Check) error {
 	switch c.Route.Type {
 	case m.RouteByTags:
+		sess.Table("route_by_tag_index")
 		tagRoutes := make([]m.RouteByTagIndex, len(c.Route.Config["tags"].([]string)))
 		for i, tag := range c.Route.Config["tags"].([]string) {
 			tagRoutes[i] = m.RouteByTagIndex{
@@ -461,6 +467,7 @@ func addCheckRoutes(sess *session, c *m.Check) error {
 			return err
 		}
 	case m.RouteByIds:
+		sess.Table("route_by_id_index")
 		idxs := make([]m.RouteByIdIndex, len(c.Route.Config["ids"].([]int64)))
 		for i, id := range c.Route.Config["ids"].([]int64) {
 			idxs[i] = m.RouteByIdIndex{
@@ -470,6 +477,7 @@ func addCheckRoutes(sess *session, c *m.Check) error {
 			}
 		}
 		if _, err := sess.Insert(&idxs); err != nil {
+			log.Debug(fmt.Sprintf("addCheckRoutes for session: %#v Error %s", idxs, err.Error()))
 			return err
 		}
 	default:
