@@ -121,6 +121,22 @@ func (c Check) Validate() error {
 		if err := validateDNSSettings(c.Settings); err != nil {
 			return err
 		}
+	case CDNINTEGRITY_CHECK:
+		if err := validateCDNIntegritySettings(c.Settings); err != nil {
+			return err
+		}
+	case TCP_CHECK:
+		if err := validateTCPSettings(c.Settings); err != nil {
+			return err
+		}
+	case STATIC_CHECK:
+		if err := validateStaticSettings(c.Settings); err != nil {
+			return err
+		}
+	case CLINK_CHECK:
+		if err := validateClinkSettings(c.Settings); err != nil {
+			return err
+		}
 	default:
 		return NewValidationError(fmt.Sprintf("unknown check type. %s", c.Type))
 	}
@@ -278,6 +294,35 @@ type CheckForAlertDTO struct {
 	Updated        time.Time
 }
 
+func validateCDNIntegritySettings(settings map[string]interface{}) error {
+	// requiredFields := map[string]string{
+	// 	"hostname": "string",
+	// 	"product":  "string",
+	// }
+
+	// optionalFields := map[string]string{
+	// 	"numfile":   "number",
+	// 	"method":    "string",
+	// 	"timeout":   "number",
+	// 	"headers":   "string",
+	// 	"chunksize": "number",
+	// }
+
+	return nil
+
+}
+
+func validateTCPSettings(settings map[string]interface{}) error {
+	return nil
+}
+
+func validateStaticSettings(settings map[string]interface{}) error {
+	return nil
+}
+
+func validateClinkSettings(settings map[string]interface{}) error {
+	return nil
+}
 func validateHTTPSettings(settings map[string]interface{}) error {
 	requiredFields := map[string]string{
 		"host": "string",

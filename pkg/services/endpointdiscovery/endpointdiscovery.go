@@ -225,7 +225,7 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 			NumProbes: 3,
 			Steps:     3,
 		},
-		Enabled: false,
+		Enabled: true,
 	}
 
 	clinkCheck := m.Check{
@@ -258,6 +258,22 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 			"headers":   "User-Agent: Mozilla/5.0\nAccept-Encoding: gzip\n",
 			"numfile":   5,
 			"chunksize": 3145728,
+		},
+		Route: &m.CheckRoute{
+			Type:   m.RouteByIds,
+			Config: map[string]interface{}{"ids": defaultProbes},
+		},
+		HealthSettings: &m.CheckHealthSettings{
+			NumProbes: 3,
+			Steps:     3,
+		},
+		Enabled: false,
+	}
+	tcpCheck := m.Check{
+		Type:      "tcp",
+		Frequency: 1800,
+		Settings: map[string]interface{}{
+			"host": host,
 		},
 		Route: &m.CheckRoute{
 			Type:   m.RouteByIds,
@@ -314,6 +330,7 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 	checks = append(checks, httpsCheck)
 	checks = append(checks, staticCheck)
 	checks = append(checks, clinkCheck)
+	checks = append(checks, tcpCheck)
 	checks = append(checks, cdnintegrityCheck)
 	//Default disable:
 	checks = append(checks, dnsCheck)
