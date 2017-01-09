@@ -13,26 +13,7 @@ import (
 
 	"github.com/raintank/worldping-api/pkg/log"
 	m "github.com/raintank/worldping-api/pkg/models"
-	"github.com/raintank/worldping-api/pkg/services/sqlstore"
 )
-
-var defaultProbes []int64
-
-func InitEndpointDiscovery() error {
-	log.Debug("Init Endpoint Discovery")
-	for _, name := range []string{"vnpt_hn", "vnpt", "fpt", "viettel", "thanhpv"} {
-		probe, err := sqlstore.GetProbeByName(name, 1)
-		if err != nil {
-			if err == m.ErrProbeNotFound {
-				log.Warn("DefaultProbe %s not found.", name)
-				continue
-			}
-			return err
-		}
-		defaultProbes = append(defaultProbes, probe.Id)
-	}
-	return nil
-}
 
 type Endpoint struct {
 	Host string
@@ -126,14 +107,6 @@ func Discover(hostname string) (*m.EndpointDTO, error) {
 	}()
 
 	for c := range checkChan {
-		c.HealthSettings = &m.CheckHealthSettings{
-			NumProbes: 3,
-			Steps:     3,
-		}
-		c.Route = &m.CheckRoute{
-			Type:   m.RouteByIds,
-			Config: map[string]interface{}{"ids": defaultProbes},
-		}
 		checks = append(checks, *c)
 	}
 
@@ -146,159 +119,6 @@ func Discover(hostname string) (*m.EndpointDTO, error) {
 
 }
 
-func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
-	endpoint, err := NewEndpoint(hostname)
-	if err != nil {
-		log.Error(3, "failde to parse the endpoint name %s. %s", hostname, err)
-		return nil, err
-	}
-
-	checks := make([]m.Check, 0)
-	path := "/"
-	host := hostname
-	if endpoint.URL != nil {
-		host = endpoint.URL.String()
-		path = endpoint.URL.Path
-	}
-	httpCheck := m.Check{
-		Type:      "http",
-		Frequency: 60,
-		Settings: map[string]interface{}{
-			"host":    host,
-			"port":    80,
-			"path":    path,
-			"method":  "GET",
-			"headers": "User-Agent: Mozilla/5.0\nAccept-Encoding: gzip\n",
-			"timeout": 5,
-			"getall":  true,
-		},
-		Route: &m.CheckRoute{
-			Type:   m.RouteByIds,
-			Config: map[string]interface{}{"ids": defaultProbes},
-		},
-		Enabled: true,
-	}
-
-	httpsCheck := m.Check{
-		Type:      "https",
-		Frequency: 60,
-		Settings: map[string]interface{}{
-			"host":    host,
-			"port":    443,
-			"path":    path,
-			"method":  "GET",
-			"headers": "User-Agent: Mozilla/5.0\nAccept-Encoding: gzip\n",
-			"timeout": 5,
-			"getall":  true,
-		},
-		Route: &m.CheckRoute{
-			Type:   m.RouteByIds,
-			Config: map[string]interface{}{"ids": defaultProbes},
-		},
-		Enabled: true,
-	}
-
-	staticCheck := m.Check{
-		Type:      "static",
-		Frequency: 60,
-		Settings: map[string]interface{}{
-			"host":    host,
-			"method":  "GET",
-			"headers": "User-Agent: Mozilla/5.0\nAccept-Encoding: gzip\n",
-			"timeout": 5,
-			"total":   5,
-			"getall":  true,
-		},
-		Route: &m.CheckRoute{
-			Type:   m.RouteByIds,
-			Config: map[string]interface{}{"ids": defaultProbes},
-		},
-		Enabled: false,
-	}
-
-	clinkCheck := m.Check{
-		Type:      "clink",
-		Frequency: 1800,
-		Settings: map[string]interface{}{
-			"host":    host,
-			"method":  "GET",
-			"headers": "User-Agent: Mozilla/5.0\nAccept-Encoding: gzip\n",
-			"timeout": 5,
-			"total":   5,
-			"getall":  true,
-		},
-		Route: &m.CheckRoute{
-			Type:   m.RouteByIds,
-			Config: map[string]interface{}{"ids": defaultProbes},
-		},
-		Enabled: false,
-	}
-
-	cdnintegrityCheck := m.Check{
-		Type:      "cdnintegrity",
-		Frequency: 1800,
-		Settings: map[string]interface{}{
-			"host":      host,
-			"headers":   "User-Agent: Mozilla/5.0\nAccept-Encoding: gzip\n",
-			"numfile":   5,
-			"chunksize": 3145728,
-		},
-		Route: &m.CheckRoute{
-			Type:   m.RouteByIds,
-			Config: map[string]interface{}{"ids": defaultProbes},
-		},
-		Enabled: false,
-	}
-
-	//Default disable:
-	dnsCheck := m.Check{
-		Type:      "dns",
-		Frequency: 60,
-		Settings: map[string]interface{}{
-			"name":     "",
-			"type":     "",
-			"port":     53,
-			"server":   "",
-			"timeout":  5,
-			"protocol": "udp",
-		},
-		Route: &m.CheckRoute{
-			Type:   m.RouteByIds,
-			Config: map[string]interface{}{"ids": defaultProbes},
-		},
-		Enabled: false,
-	}
-	pingCheck := m.Check{
-		Type:      "ping",
-		Frequency: 10,
-		Settings: map[string]interface{}{
-			"hostname": host,
-			"timeout":  5,
-		},
-		Route: &m.CheckRoute{
-			Type:   m.RouteByIds,
-			Config: map[string]interface{}{"ids": defaultProbes},
-		},
-		Enabled: false,
-	}
-
-	checks = append(checks, httpCheck)
-	checks = append(checks, httpsCheck)
-	checks = append(checks, staticCheck)
-	checks = append(checks, clinkCheck)
-	checks = append(checks, cdnintegrityCheck)
-	//Default disable:
-	checks = append(checks, dnsCheck)
-	checks = append(checks, pingCheck)
-
-	resp := m.EndpointDTO{
-		Name:   hostname,
-		Checks: checks,
-	}
-
-	return &resp, nil
-}
-
 func DiscoverPing(endpoint *Endpoint) (*m.Check, error) {
 	err := exec.Command("ping", "-c 3", "-W 1", "-q", endpoint.Host).Run()
 	if err != nil {
@@ -307,7 +127,7 @@ func DiscoverPing(endpoint *Endpoint) (*m.Check, error) {
 
 	return &m.Check{
 		Type:      "ping",
-		Frequency: 60,
+		Frequency: 10,
 		Settings: map[string]interface{}{
 			"hostname": endpoint.Host,
 			"timeout":  5,
@@ -344,7 +164,7 @@ func DiscoverHttp(endpoint *Endpoint) (*m.Check, error) {
 
 	return &m.Check{
 		Type:      "http",
-		Frequency: 120,
+		Frequency: 60,
 		Settings: map[string]interface{}{
 			"host":    varHost,
 			"port":    varPort,
@@ -381,7 +201,7 @@ func DiscoverHttps(endpoint *Endpoint) (*m.Check, error) {
 
 	return &m.Check{
 		Type:      "https",
-		Frequency: 120,
+		Frequency: 60,
 		Settings: map[string]interface{}{
 			"host":         varHost,
 			"port":         varPort,
@@ -421,7 +241,7 @@ func DiscoverDNS(endpoint *Endpoint) (*m.Check, error) {
 
 	return &m.Check{
 		Type:      "dns",
-		Frequency: 120,
+		Frequency: 60,
 		Settings: map[string]interface{}{
 			"name":     recordName,
 			"type":     recordType,
