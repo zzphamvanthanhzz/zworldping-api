@@ -176,6 +176,10 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 			Type:   m.RouteByIds,
 			Config: map[string]interface{}{"ids": defaultProbes},
 		},
+		HealthSettings: &m.CheckHealthSettings{
+			NumProbes: 3,
+			Steps:     3,
+		},
 		Enabled: true,
 	}
 
@@ -195,6 +199,10 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 			Type:   m.RouteByIds,
 			Config: map[string]interface{}{"ids": defaultProbes},
 		},
+		HealthSettings: &m.CheckHealthSettings{
+			NumProbes: 3,
+			Steps:     3,
+		},
 		Enabled: true,
 	}
 
@@ -212,6 +220,10 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 		Route: &m.CheckRoute{
 			Type:   m.RouteByIds,
 			Config: map[string]interface{}{"ids": defaultProbes},
+		},
+		HealthSettings: &m.CheckHealthSettings{
+			NumProbes: 3,
+			Steps:     3,
 		},
 		Enabled: false,
 	}
@@ -231,6 +243,10 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 			Type:   m.RouteByIds,
 			Config: map[string]interface{}{"ids": defaultProbes},
 		},
+		HealthSettings: &m.CheckHealthSettings{
+			NumProbes: 3,
+			Steps:     3,
+		},
 		Enabled: false,
 	}
 
@@ -246,6 +262,10 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 		Route: &m.CheckRoute{
 			Type:   m.RouteByIds,
 			Config: map[string]interface{}{"ids": defaultProbes},
+		},
+		HealthSettings: &m.CheckHealthSettings{
+			NumProbes: 3,
+			Steps:     3,
 		},
 		Enabled: false,
 	}
@@ -266,6 +286,10 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 			Type:   m.RouteByIds,
 			Config: map[string]interface{}{"ids": defaultProbes},
 		},
+		HealthSettings: &m.CheckHealthSettings{
+			NumProbes: 3,
+			Steps:     3,
+		},
 		Enabled: false,
 	}
 	pingCheck := m.Check{
@@ -278,6 +302,10 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 		Route: &m.CheckRoute{
 			Type:   m.RouteByIds,
 			Config: map[string]interface{}{"ids": defaultProbes},
+		},
+		HealthSettings: &m.CheckHealthSettings{
+			NumProbes: 3,
+			Steps:     3,
 		},
 		Enabled: false,
 	}
