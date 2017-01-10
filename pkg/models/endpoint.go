@@ -92,12 +92,8 @@ func (c Check) Validate() error {
 
 	//check frequency
 	validFreq := map[int64]bool{
-		10:  true,
-		30:  true,
-		60:  true,
-		120: true,
-		300: true,
-		600: true,
+		60:   true,
+		1800: true,
 	}
 	if _, ok := validFreq[c.Frequency]; !ok {
 		return NewValidationError("Invalid frequency specified.")
@@ -295,38 +291,213 @@ type CheckForAlertDTO struct {
 }
 
 func validateCDNIntegritySettings(settings map[string]interface{}) error {
-	// requiredFields := map[string]string{
-	// 	"hostname": "string",
-	// 	"product":  "string",
-	// }
+	requiredFields := map[string]string{
+		"hostname": "string",
+		"product":  "string",
+	}
+	optFields := map[string]string{
+		"numfile": "number",
+		"method":  "string",
+		"headers": "string",
+		"timeout": "number",
+	}
+	for field, dataType := range requiredFields {
+		rawVal, ok := settings[field]
+		if !ok {
+			return NewValidationError(fmt.Sprintf("%s field missing from CDNIntegrity check", field))
+		}
+		switch dataType {
+		case "string":
+			value, ok := rawVal.(string)
+			if !ok {
+				return NewValidationError(fmt.Sprintf("%s field is invalid type. Expected string", field))
+			}
+			if value == "" {
+				return NewValidationError(fmt.Sprintf("%s field missing from CDNIntegrity check", field))
+			}
+		}
+	}
 
-	// optionalFields := map[string]string{
-	// 	"numfile":   "number",
-	// 	"method":    "string",
-	// 	"timeout":   "number",
-	// 	"headers":   "string",
-	// 	"chunksize": "number",
-	// }
-
+	for field, dataType := range optFields {
+		rawVal, ok := settings[field]
+		if !ok {
+			continue
+		}
+		switch dataType {
+		case "string":
+			_, ok := rawVal.(string)
+			if !ok {
+				return NewValidationError(fmt.Sprintf("%s field is invalid type. Expected string", field))
+			}
+		case "number":
+			value, ok := rawVal.(float64)
+			if !ok {
+				return NewValidationError(fmt.Sprintf("%s field is invalid type. Expected number", field))
+			}
+			if field == "timeout" {
+				if value <= 0.0 || value > 10.0 {
+					return NewValidationError(fmt.Sprintf("%s field is invalid. must be between 1 and 10", field))
+				}
+			}
+			if field == "numfile" {
+				if value <= 0.0 || value > 100 {
+					return NewValidationError(fmt.Sprintf("CDNIntegrity %s field is invalid", field))
+				}
+			}
+		}
+	}
 	return nil
-
 }
 
 func validateTCPSettings(settings map[string]interface{}) error {
+	requiredFields := map[string]string{
+		"hostname": "string",
+		"ip":       "string",
+		"port":     "number",
+		"product":  "string",
+	}
+	for field, dataType := range requiredFields {
+		rawVal, ok := settings[field]
+		if !ok {
+			return NewValidationError(fmt.Sprintf("%s field missing from TCP check", field))
+		}
+		switch dataType {
+		case "string":
+			value, ok := rawVal.(string)
+			if !ok {
+				return NewValidationError(fmt.Sprintf("%s field is invalid type. Expected string", field))
+			}
+			if value == "" {
+				return NewValidationError(fmt.Sprintf("%s field missing from TCP check", field))
+			}
+		}
+	}
 	return nil
+
 }
 
 func validateStaticSettings(settings map[string]interface{}) error {
+	requiredFields := map[string]string{
+		"hostname": "string",
+		"product":  "string",
+	}
+	optFields := map[string]string{
+		"total":   "number",
+		"method":  "string",
+		"headers": "string",
+		"timeout": "number",
+	}
+	for field, dataType := range requiredFields {
+		rawVal, ok := settings[field]
+		if !ok {
+			return NewValidationError(fmt.Sprintf("%s field missing from STATIC check", field))
+		}
+		switch dataType {
+		case "string":
+			value, ok := rawVal.(string)
+			if !ok {
+				return NewValidationError(fmt.Sprintf("%s field is invalid type. Expected string", field))
+			}
+			if value == "" {
+				return NewValidationError(fmt.Sprintf("%s field missing from STATIC check", field))
+			}
+		}
+	}
+
+	for field, dataType := range optFields {
+		rawVal, ok := settings[field]
+		if !ok {
+			continue
+		}
+		switch dataType {
+		case "string":
+			_, ok := rawVal.(string)
+			if !ok {
+				return NewValidationError(fmt.Sprintf("%s field is invalid type. Expected string", field))
+			}
+		case "number":
+			value, ok := rawVal.(float64)
+			if !ok {
+				return NewValidationError(fmt.Sprintf("%s field is invalid type. Expected number", field))
+			}
+			if field == "timeout" {
+				if value <= 0.0 || value > 10.0 {
+					return NewValidationError(fmt.Sprintf("%s field is invalid. must be between 1 and 10", field))
+				}
+			}
+			if field == "total" {
+				if value <= 0.0 || value > 100 {
+					return NewValidationError(fmt.Sprintf("STATIC %s field is invalid", field))
+				}
+			}
+		}
+	}
 	return nil
 }
 
 func validateClinkSettings(settings map[string]interface{}) error {
+	requiredFields := map[string]string{
+		"hostname": "string",
+		"product":  "string",
+	}
+	optFields := map[string]string{
+		"total":   "number",
+		"method":  "string",
+		"headers": "string",
+		"timeout": "number",
+	}
+	for field, dataType := range requiredFields {
+		rawVal, ok := settings[field]
+		if !ok {
+			return NewValidationError(fmt.Sprintf("%s field missing from CLINK check", field))
+		}
+		switch dataType {
+		case "string":
+			value, ok := rawVal.(string)
+			if !ok {
+				return NewValidationError(fmt.Sprintf("%s field is invalid type. Expected string", field))
+			}
+			if value == "" {
+				return NewValidationError(fmt.Sprintf("%s field missing from CLINK check", field))
+			}
+		}
+	}
+
+	for field, dataType := range optFields {
+		rawVal, ok := settings[field]
+		if !ok {
+			continue
+		}
+		switch dataType {
+		case "string":
+			_, ok := rawVal.(string)
+			if !ok {
+				return NewValidationError(fmt.Sprintf("%s field is invalid type. Expected string", field))
+			}
+		case "number":
+			value, ok := rawVal.(float64)
+			if !ok {
+				return NewValidationError(fmt.Sprintf("%s field is invalid type. Expected number", field))
+			}
+			if field == "timeout" {
+				if value <= 0.0 || value > 10.0 {
+					return NewValidationError(fmt.Sprintf("%s field is invalid. must be between 1 and 10", field))
+				}
+			}
+			if field == "total" {
+				if value <= 0.0 || value > 100 {
+					return NewValidationError(fmt.Sprintf("CLink %s field is invalid", field))
+				}
+			}
+		}
+	}
 	return nil
 }
 func validateHTTPSettings(settings map[string]interface{}) error {
 	requiredFields := map[string]string{
-		"host": "string",
-		"path": "string",
+		"hostname": "string",
+		"path":     "string",
+		"product":  "string",
 	}
 	optFields := map[string]string{
 		"port":        "number",
@@ -387,8 +558,9 @@ func validateHTTPSettings(settings map[string]interface{}) error {
 }
 func validateHTTPSSettings(settings map[string]interface{}) error {
 	requiredFields := map[string]string{
-		"host": "string",
-		"path": "string",
+		"hostname": "string",
+		"path":     "string",
+		"product":  "string",
 	}
 	optFields := map[string]string{
 		"port":         "number",

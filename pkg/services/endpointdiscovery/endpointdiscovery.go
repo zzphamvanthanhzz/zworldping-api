@@ -58,6 +58,20 @@ func NewEndpoint(hostname string) (*Endpoint, error) {
 		return e, nil
 	}
 
+	//case tcp check:
+	if strings.Contains(hostname, ":") {
+		socks := strings.Split(hostname, ":")
+		if len(socks) == 2 {
+			ip := socks[0]
+			port := socks[1]
+			if _, err := strconv.Atoi(port); err == nil {
+				if net.ParseIP(ip) != nil {
+					return e, nil
+				}
+			}
+		}
+	}
+
 	addr, err := net.LookupHost(e.Host)
 	if err != nil || len(addr) < 1 {
 		e.Host = "www." + hostname
