@@ -75,10 +75,10 @@ func main() {
 	event_publish.Init(metricsBackend, setting.EventPublish.Topic, setting.EventPublish.Broker, setting.EventPublish.Compression, setting.EventPublish.Enabled)
 
 	api.InitCollectorController(metricsBackend)
-	if setting.AlertingEnabled {
-		alerting.Init(metricsBackend)
-		alerting.Construct()
-	}
+	// if setting.AlertingEnabled {
+	alerting.Init(metricsBackend)
+	alerting.Construct()
+	// }
 
 	if err := notifications.Init(); err != nil {
 		log.Fatal(3, "Notification service failed to initialize", err)
