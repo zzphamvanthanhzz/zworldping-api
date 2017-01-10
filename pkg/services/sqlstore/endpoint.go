@@ -816,14 +816,14 @@ func GetChecksForAlerts(ts int64) ([]m.CheckForAlertDTO, error) {
 }
 
 func getChecksForAlerts(sess *session, ts int64) ([]m.CheckForAlertDTO, error) {
-	sess.Join("INNER", "endpoint", "check.endpoint_id=endpoint.id")
+	sess.Join("INNER", "endpoint", "`check`.endpoint_id=`endpoint`.id")
 	sess.Where("`check`.enabled=1 AND (? % `check`.frequency) = `check`.offset", ts)
 	sess.Cols(
 		"`check`.id",
 		"`check`.org_id",
 		"`check`.endpoint_id",
-		"endpoint.slug",
-		"endpoint.name",
+		"`endpoint`.slug",
+		"`endpoint`.name",
 		"`check`.type",
 		"`check`.offset",
 		"`check`.frequency",
