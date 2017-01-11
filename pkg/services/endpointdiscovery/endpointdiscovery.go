@@ -141,8 +141,8 @@ func Discover(hostname string) (*m.EndpointDTO, error) {
 
 	for c := range checkChan {
 		c.HealthSettings = &m.CheckHealthSettings{
-			NumProbes: 3,
-			Steps:     3,
+			NumProbes: 1,
+			Steps:     1,
 		}
 		c.Route = &m.CheckRoute{
 			Type:   m.RouteByIds,
@@ -191,8 +191,8 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 			Config: map[string]interface{}{"ids": defaultProbes},
 		},
 		HealthSettings: &m.CheckHealthSettings{
-			NumProbes: 3,
-			Steps:     3,
+			NumProbes: 1,
+			Steps:     1,
 		},
 		Enabled: true,
 	}
@@ -214,8 +214,8 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 			Config: map[string]interface{}{"ids": defaultProbes},
 		},
 		HealthSettings: &m.CheckHealthSettings{
-			NumProbes: 3,
-			Steps:     3,
+			NumProbes: 1,
+			Steps:     1,
 		},
 		Enabled: true,
 	}
@@ -236,8 +236,8 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 			Config: map[string]interface{}{"ids": defaultProbes},
 		},
 		HealthSettings: &m.CheckHealthSettings{
-			NumProbes: 3,
-			Steps:     3,
+			NumProbes: 1,
+			Steps:     1,
 		},
 		Enabled: true,
 	}
@@ -258,8 +258,8 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 			Config: map[string]interface{}{"ids": defaultProbes},
 		},
 		HealthSettings: &m.CheckHealthSettings{
-			NumProbes: 3,
-			Steps:     3,
+			NumProbes: 1,
+			Steps:     1,
 		},
 		Enabled: false,
 	}
@@ -278,8 +278,8 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 			Config: map[string]interface{}{"ids": defaultProbes},
 		},
 		HealthSettings: &m.CheckHealthSettings{
-			NumProbes: 3,
-			Steps:     3,
+			NumProbes: 1,
+			Steps:     1,
 		},
 		Enabled: false,
 	}
@@ -294,8 +294,8 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 			Config: map[string]interface{}{"ids": defaultProbes},
 		},
 		HealthSettings: &m.CheckHealthSettings{
-			NumProbes: 3,
-			Steps:     3,
+			NumProbes: 1,
+			Steps:     1,
 		},
 		Enabled: false,
 	}
@@ -317,8 +317,8 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 			Config: map[string]interface{}{"ids": defaultProbes},
 		},
 		HealthSettings: &m.CheckHealthSettings{
-			NumProbes: 3,
-			Steps:     3,
+			NumProbes: 1,
+			Steps:     1,
 		},
 		Enabled: false,
 	}
@@ -334,8 +334,8 @@ func GetDefaultChecks(hostname string) (*m.EndpointDTO, error) {
 			Config: map[string]interface{}{"ids": defaultProbes},
 		},
 		HealthSettings: &m.CheckHealthSettings{
-			NumProbes: 3,
-			Steps:     3,
+			NumProbes: 1,
+			Steps:     1,
 		},
 		Enabled: false,
 	}
