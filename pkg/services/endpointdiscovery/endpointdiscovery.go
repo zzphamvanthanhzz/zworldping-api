@@ -20,7 +20,7 @@ var defaultProbes []int64
 
 func InitEndpointDiscovery() error {
 	log.Debug("Init Endpoint Discovery")
-	for _, name := range []string{"vnpt_hn", "vnpt", "fpt", "viettel", "thanhpv"} {
+	for _, name := range []string{"vnpt_hn", "vnpt", "fpt", "viettel", "thanhpv", "thanhpvwindow"} {
 		probe, err := sqlstore.GetProbeByName(name, 1)
 		if err != nil {
 			if err == m.ErrProbeNotFound {
@@ -42,46 +42,47 @@ type Endpoint struct {
 
 func NewEndpoint(hostname string) (*Endpoint, error) {
 	e := &Endpoint{Host: hostname}
-	if strings.Contains(hostname, "://") {
-		u, err := url.Parse(hostname)
-		if err != nil {
-			return nil, err
-		}
-		e.Host = strings.Split(u.Host, ":")[0]
-		e.URL = u
-	}
-	e.Host = strings.ToLower(e.Host)
+	return e, nil
+	// if strings.Contains(hostname, "://") {
+	// 	u, err := url.Parse(hostname)
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
+	// 	e.Host = strings.Split(u.Host, ":")[0]
+	// 	e.URL = u
+	// }
+	// e.Host = strings.ToLower(e.Host)
 
-	if net.ParseIP(e.Host) != nil {
-		// the parsed host is an IP address.
-		e.IsIP = true
-		return e, nil
-	}
+	// if net.ParseIP(e.Host) != nil {
+	// 	// the parsed host is an IP address.
+	// 	e.IsIP = true
+	// 	return e, nil
+	// }
 
 	//case tcp check:
-	if strings.Contains(hostname, ":") {
-		socks := strings.Split(hostname, ":")
-		if len(socks) == 2 {
-			ip := socks[0]
-			port := socks[1]
-			if _, err := strconv.Atoi(port); err == nil {
-				if net.ParseIP(ip) != nil {
-					return e, nil
-				}
-			}
-		}
-	}
+	// if strings.Contains(hostname, ":") {
+	// 	socks := strings.Split(hostname, ":")
+	// 	if len(socks) == 2 {
+	// 		ip := socks[0]
+	// 		port := socks[1]
+	// 		if _, err := strconv.Atoi(port); err == nil {
+	// 			if net.ParseIP(ip) != nil {
+	// 				return e, nil
+	// 			}
+	// 		}
+	// 	}
+	// }
 
-	addr, err := net.LookupHost(e.Host)
-	if err != nil || len(addr) < 1 {
-		e.Host = "www." + hostname
-		addr, err = net.LookupHost(e.Host)
-		if err != nil || len(addr) < 1 {
-			return nil, fmt.Errorf("failed to lookup IP of domain %s.", e.Host)
-		}
-	}
+	// addr, err := net.LookupHost(e.Host)
+	// if err != nil || len(addr) < 1 {
+	// 	e.Host = "www." + hostname
+	// 	addr, err = net.LookupHost(e.Host)
+	// 	if err != nil || len(addr) < 1 {
+	// 		return nil, fmt.Errorf("failed to lookup IP of domain %s.", e.Host)
+	// 	}
+	// }
 
-	return e, nil
+	// return e, nil
 }
 
 func Discover(hostname string) (*m.EndpointDTO, error) {
