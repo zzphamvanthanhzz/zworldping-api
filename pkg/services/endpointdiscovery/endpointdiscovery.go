@@ -20,8 +20,8 @@ var defaultProbes []int64
 
 func InitEndpointDiscovery() error {
 	log.Debug("Init Endpoint Discovery")
-	for _, name := range []string{"vnpt_hn", "vnpt", "fpt", "viettel", "thanhpv", "thanhpvwindow"} {
-		probe, err := sqlstore.GetProbeByName(name, 1)
+	for _, name := range []string{"VNPT_HN", "VNPT", "FPT", "VIETTEL", "THANHPV", "THANHPVWINDOW"} {
+		probe, err := sqlstore.GetProbeByName(name, 1) //this is column `name` of table `probe`
 		if err != nil {
 			if err == m.ErrProbeNotFound {
 				log.Warn("DefaultProbe %s not found.", name)
